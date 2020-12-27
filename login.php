@@ -1,11 +1,10 @@
 <?php
-/** @var $mysqli mysqli */
-
 // Initialize the session
 session_start();
+/** @var $mysqli mysqli */
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
-if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
     header("location: welcome.php");
     exit;
 }
@@ -18,45 +17,45 @@ $username = $password = "";
 $username_err = $password_err = "";
 
 // Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if username is empty
-    if(empty(trim($_POST["username"]))){
+    if (empty(trim($_POST["username"]))) {
         $username_err = "Please enter username.";
-    } else{
+    } else {
         $username = trim($_POST["username"]);
     }
 
     // Check if password is empty
-    if(empty(trim($_POST["password"]))){
+    if (empty(trim($_POST["password"]))) {
         $password_err = "Please enter your password.";
-    } else{
+    } else {
         $password = trim($_POST["password"]);
     }
 
     // Validate credentials
-    if(empty($username_err) && empty($password_err)){
+    if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
         $sql = "SELECT id, username, password, administrator FROM users WHERE username = ?";
 
-        if($stmt = mysqli_prepare($mysqli, $sql)){
+        if ($stmt = $mysqli->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            $stmt->bind_param("s", $param_username);
 
             // Set parameters
             $param_username = $username;
 
             // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
+            if ($stmt->execute()) {
                 // Store result
-                mysqli_stmt_store_result($stmt);
+                $stmt->store_result();
 
                 // Check if username exists, if yes then verify password
-                if(mysqli_stmt_num_rows($stmt) == 1){
+                if ($stmt->num_rows == 1) {
                     // Bind result variables
-                    mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password, $administrator);
-                    if(mysqli_stmt_fetch($stmt)){
-                        if(password_verify($password, $hashed_password)){
+                    $stmt->bind_result($id, $username, $hashed_password, $administrator);
+                    if ($stmt->fetch()) {
+                        if (password_verify($password, $hashed_password)) {
                             // Password is correct, so start a new session
                             session_start();
 
@@ -68,28 +67,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                             // Redirect user to welcome page
                             header("location: welcome.php");
-                        } else{
+                        } else {
                             // Display an error message if password is not valid
                             $password_err = "The password you entered was not valid.";
                         }
                     }
-                } else{
+                } else {
                     // Display an error message if username doesn't exist
                     $username_err = "No account found with that username.";
                 }
-            } else{
+            } else {
                 echo "Oops! Something went wrong. Please try again later.";
             }
 
             // Close statement
-            mysqli_stmt_close($stmt);
+            $stmt->close();
         }
     }
 
     // Close connection
-    mysqli_close($mysqli);
+    $mysqli->close();
 }
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>

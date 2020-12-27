@@ -48,7 +48,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
         </div>
         <p>
-            <a href="#" class="btn btn-primary">Vote in AGM</a>
+            <a href="votes-list.php" class="btn btn-primary">Vote in AGM</a>
             <?php
             if ($_SESSION["administrator"]){
                 echo "<a href='create_election.php' class='btn btn-secondary'>Create Elections</a>";

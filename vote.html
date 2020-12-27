@@ -57,17 +57,7 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 
-<script>
-    $(function () {
-        const $sortable = $("#sortable");
-        $sortable.sortable();
-        $sortable.disableSelection();
-    });
-
-    document.getElementById("vote").addEventListener("click", function () {
-        const sortedIDs = $("#sortable").sortable("toArray",);
-        console.log(sortedIDs);
-    })
+<script src="sortable_list_script.js">
 </script>
 
 </body>
