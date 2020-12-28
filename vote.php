@@ -45,6 +45,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         <div class="page-header">
             <?php
             include "display_results.php";
+            include "display_voting_system.php";
+
             require_once "config.php";
             /** @var $mysqli mysqli */
 
@@ -68,66 +70,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                     case 1:
                                         echo "<h1 class='font-weight-light'>Vote in election for <b>" . $position_name . "</b></h1>";
                                         echo "<h2 class='font-weight-light'>There are <b>" . $positions_available . "</b> positions available for " . $position_name . "</h2>";
-                                        echo "<p class='text-secondary'> Technical Information: Election ID =
-                                                    <span id='elec_id'>" . $election_id . "</span>";
+                                        echo "<p class='text-secondary'> Technical Information: Election ID = <span id='election_id'>" . $election_id . "</span>";
 
-                                        $sql_get_if_voted = "SELECT id FROM users_voted WHERE user_id = ? AND election_id = ?";
-                                        if ($stmt_get_if_voted = $mysqli->prepare($sql_get_if_voted)) {
-                                            $stmt_get_if_voted->bind_param("ii", $_SESSION["id"], $election_id);
-
-
-                                            // Attempt to execute the prepared statement
-                                            if ($stmt_get_if_voted->execute()) {
-                                                // store result
-                                                $stmt_get_if_voted->store_result();
-
-                                                if ($stmt_get_if_voted->num_rows == 1) {
-                                                    echo "<h2 class='font-weight-light'>You have already voted in this election.</h2>";
-                                                    exit;
-                                                } else {
-
-                                                    $sql_get_candidates = "SELECT id, username FROM candidates WHERE election_id = ?";
-                                                    if ($stmt_get_candidates = $mysqli->prepare($sql_get_candidates)) {
-                                                        $stmt_get_candidates->bind_param("i", $election_id);
-
-                                                        if ($stmt_get_candidates->execute()) {
-                                                            $stmt_get_candidates->store_result();
-
-                                                            if ($stmt_get_candidates->num_rows > 0) {
-                                                                echo "<ul class='list-group' id='sortable'>";
-
-                                                                $stmt_get_candidates->bind_result($r_candidate_id,
-                                                                    $r_candidate_username);
-
-                                                                while ($stmt_get_candidates->fetch()) {
-                                                                    $html_id = "vote-" . $r_candidate_id;
-                                                                    echo "<li class='list-group-item ui-state-default' id='" .
-                                                                        $html_id . "'>" . $r_candidate_username . "</li>";
-                                                                }
-
-                                                                echo "</ul>";
-                                                                echo "<p>
-                                                        <a href='#' class='btn btn-primary my-2' id='vote'>Vote</a>
-                                                        <a href='#' class='btn btn-secondary my-2'>Abstain</a>
-                                                    </p>";
-                                                            } else {
-                                                                echo "There are no candidates for this election.";
-                                                            }
-                                                        } else {
-                                                            echo "Oops! Something went wrong. Please try again later.";
-                                                        }
-                                                        $stmt_get_candidates->close();
-                                                    }
-                                                }
-                                            } else {
-                                                echo "Oops! Something went wrong. Please try again later.";
-                                            }
-                                            // Close statement
-                                            $stmt_get_if_voted->close();
-                                        }
+                                        display_voting_system($election_id, $mysqli);
                                         break;
                                     case 2:
-                                        display_results($election_id);
+                                        display_results($election_id, $mysqli);
                                         break;
                                 }
 

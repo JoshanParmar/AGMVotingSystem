@@ -1,6 +1,4 @@
 <?php
-require_once "config.php";
-/** @var $mysqli mysqli */
 
 function convert_vote_string($vote_string, $candidates){
     $vote_id_array = explode(";", $vote_string);
@@ -20,8 +18,7 @@ function convert_vote_string($vote_string, $candidates){
     return $vote_string;
 }
 
-function display_results($election_id){
-    global $mysqli;
+function display_results($election_id, mysqli $mysqli){
     $candidates_array = array();
 
     $sql_get_candidates = "SELECT id, username FROM candidates WHERE election_id = ?";
@@ -53,13 +50,15 @@ function display_results($election_id){
 
         if ($stmt_get_votes->execute()) {
             $stmt_get_votes->store_result();
+            echo "<h3>The results of this election were as follows</h3>";
+            echo "<p>This system is not yet set up to count votes - please copy the data below into another software to calculate the results of this election</p>";
 
             echo "<h3>The votes cast in this election were as follows</h3>";
             if ($stmt_get_votes->num_rows > 0) {
                 $stmt_get_votes->bind_result($r_vote_id, $r_vote_string);
 
                 while ($stmt_get_votes->fetch()) {
-                    echo "<p>". $r_vote_id . " : " . convert_vote_string($r_vote_string, $candidates_array) . "</p>";
+                    echo "<p>". $r_vote_id . "; " . convert_vote_string($r_vote_string, $candidates_array) . "</p>";
                 }
             } else {
                 echo "There were no votes cast this election.";

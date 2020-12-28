@@ -78,7 +78,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                             $button_link = "vote.php?election_id=".$row["id"];
                             break;
                     }
-                    echo "<a href='" . $button_link .  "#' class='btn " . $button_class . "'>" . $button_text . "</a> <br>";
+                    echo "<a href='" . $button_link .  "#' class='btn " . $button_class . " my-2'>" . $button_text . "</a> <br>";
 
                     echo "</tr>";
                 }
