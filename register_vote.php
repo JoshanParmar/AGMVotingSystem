@@ -67,11 +67,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 if ($stmt_get_if_voted->num_rows == 1) {
                     echo "<h2 class='font-weight-light'>You have already voted in this election.</h2>";
                 } else {
-                    $sql_store_vote = "INSERT INTO votes (vote_string, election_id) VALUES (?, ?)";
+                    $voter_token = uniqid('', true);
+                    $sql_store_vote = "INSERT INTO votes (vote_string, election_id, voter_token) VALUES (?, ?, ?)";
 
                     if ($stmt_store_vote = $mysqli->prepare($sql_store_vote)) {
                         // Bind variables to the prepared statement as parameters
-                        $stmt_store_vote->bind_param("si", $vote_string, $election_id);
+                        $stmt_store_vote->bind_param("sis", $vote_string, $election_id, $voter_token);
 
                         // Attempt to execute the prepared statement
                         if ($stmt_store_vote->execute()) {
@@ -84,6 +85,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                 // Attempt to execute the prepared statement
                                 if ($stmt_store_user_voted->execute()) {
                                     echo "<h2 class='font-weight-light'>Your vote has been recorded.</h2>";
+                                    echo "<h3 class='font-weight-light'>Your unique voter token was". $voter_token.
+                                        "Please make a note of this and do not share this with anyone else.</h3>";
+                                    echo "<p>You can use your unique voter token to check that your vote has been counted.</p>";
                                     } else {
                                     echo "Something went wrong. Please try again later.";
                                 }
