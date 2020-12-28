@@ -1,4 +1,15 @@
 <?php
+include "count_votes.php";
+
+function display_vote_array($vote_name_array){
+    $i = 1;
+    $vote_string = "";
+    foreach ($vote_name_array as $vote_name) {
+        $vote_string = $vote_string . "P" . $i . " to " . $vote_name . "; ";
+        $i++;
+    }
+    return $vote_string;
+}
 
 function convert_vote_string($vote_string, $candidates){
     $vote_id_array = explode(";", $vote_string);
@@ -9,45 +20,12 @@ function convert_vote_string($vote_string, $candidates){
             array_push($vote_name_array, $candidates[$vote_id]);
         }
     }
-    $i = 1;
-    $vote_string = "";
-    foreach ($vote_name_array as $vote_name) {
-        $vote_string = $vote_string . "P" . $i . " to " . $vote_name . "; ";
-        $i++;
-    }
-    return $vote_string;
+    return $vote_name_array;
 }
 
 function display_results($election_id, mysqli $mysqli){
-    $candidates_array = array();
-
-    $sql_get_candidates = "SELECT id, username FROM candidates WHERE election_id = ?";
-    if ($stmt_get_candidates = $mysqli->prepare($sql_get_candidates)) {
-        $stmt_get_candidates->bind_param("i", $election_id);
-
-        if ($stmt_get_candidates->execute()) {
-            $stmt_get_candidates->store_result();
-
-            echo "<h3>The candidates in this election were as follows</h3>";
-
-            if ($stmt_get_candidates->num_rows > 0) {
-                $stmt_get_candidates->bind_result($r_candidate_id, $r_candidate_username);
-
-                while ($stmt_get_candidates->fetch()) {
-                    $candidates_array[$r_candidate_id] = $r_candidate_username;
-                    echo "<p>";
-                    echo $r_candidate_username;
-                    echo "</p>";
-                }
-
-            } else {
-                echo "<p>There are no candidates for this election.</p>";
-            }
-        } else {
-            echo "Oops! Something went wrong. Please try again later.";
-        }
-        $stmt_get_candidates->close();
-    }
+    echo "<h3>The candidates in this election were as follows</h3>";
+    $candidates_array = get_print_candidates_array($election_id, $mysqli);
 
     $sql_get_votes = "SELECT voter_token, vote_string FROM votes WHERE election_id = ?";
     if ($stmt_get_votes = $mysqli->prepare($sql_get_votes)) {
@@ -55,16 +33,21 @@ function display_results($election_id, mysqli $mysqli){
 
         if ($stmt_get_votes->execute()) {
             $stmt_get_votes->store_result();
-            echo "<h3>The results of this election were as follows</h3>";
-            echo "<p>This system is not yet set up to count votes - please copy the data below into another software to calculate the results of this election</p>";
 
             echo "<h3>The votes cast in this election were as follows</h3>";
             if ($stmt_get_votes->num_rows > 0) {
                 $stmt_get_votes->bind_result($r_vote_id, $r_vote_string);
 
+                $votes = array();
                 while ($stmt_get_votes->fetch()) {
-                    echo "<p>". $r_vote_id . "; " . convert_vote_string($r_vote_string, $candidates_array) . "</p>";
+                    $vote_array = convert_vote_string($r_vote_string, $candidates_array);
+                    array_push($votes, $vote_array);
+                    echo "<p>". $r_vote_id . "; " . display_vote_array($vote_array) . "</p>";
                 }
+
+                echo "<h3>The results of this election were as follows</h3>";
+                count_votes($votes, 1);
+
             } else {
                 echo "There were no votes cast this election.";
             }

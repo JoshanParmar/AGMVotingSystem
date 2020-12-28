@@ -38,8 +38,10 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <div class="container-sm">
         <div class="page-header">
             <?php
+            include "get_candidates_array.php";
             include "display_results.php";
             include "display_voting_system.php";
+            include "display_candidates.php";
 
             require_once "config.php";
             /** @var $mysqli mysqli */
@@ -59,7 +61,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                             if ($stmt_get_election_data->fetch()) {
                                 switch ($status){
                                     case 0:
-                                        echo "Election unbegun";
+                                        echo "<h1 class='font-weight-light'>This election has not yet begun</h1>";
+                                        display_candidates($election_id, $mysqli);
                                         break;
                                     case 1:
                                         echo "<h1 class='font-weight-light'>Vote in election for <b>" . $position_name . "</b></h1>";
