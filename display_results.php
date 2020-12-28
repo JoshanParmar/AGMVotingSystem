@@ -28,15 +28,20 @@ function display_results($election_id, mysqli $mysqli){
         if ($stmt_get_candidates->execute()) {
             $stmt_get_candidates->store_result();
 
+            echo "<h3>The candidates in this election were as follows</h3>";
+
             if ($stmt_get_candidates->num_rows > 0) {
                 $stmt_get_candidates->bind_result($r_candidate_id, $r_candidate_username);
 
                 while ($stmt_get_candidates->fetch()) {
                     $candidates_array[$r_candidate_id] = $r_candidate_username;
+                    echo "<p>";
+                    echo $r_candidate_username;
+                    echo "</p>";
                 }
 
             } else {
-                echo "There are no candidates for this election.";
+                echo "<p>There are no candidates for this election.</p>";
             }
         } else {
             echo "Oops! Something went wrong. Please try again later.";

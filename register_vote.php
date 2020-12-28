@@ -24,20 +24,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 </head>
 <body>
 <header>
-    <div class="navbar navbar-dark bg-dark box-shadow">
-        <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
-                <strong>AGM Test Voting System</strong>
-            </a>
-        </div>
-    </div>
+    <?php include "navigation.php"; ?>
 </header>
 
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">anySociety AGM Voting System</h1>
-            <p class="lead text-muted">Custom Voting System for the anySociety AGM</p>
+            <h1 class="jumbotron-heading">CULA AGM Online</h1>
+            <p class="lead text-muted">Vote registration status</p>
         </div>
     </section>
     <div class="container-sm">

@@ -9,7 +9,7 @@ function display_voting_system($election_id, mysqli $mysqli)
             $stmt_get_if_voted->store_result();
 
             if ($stmt_get_if_voted->num_rows == 1) {
-                echo "<h2 class='font-weight-light'>You have already voted in this election.</h2>";
+                echo "<h2>You have already voted in this election.</h2>";
                 exit;
             } else {
 
@@ -36,7 +36,7 @@ function display_voting_system($election_id, mysqli $mysqli)
                             echo "<a href='#' class='btn btn-secondary my-2'>Abstain</a>";
                             echo "</p>";
                         } else {
-                            echo "There are no candidates for this election.";
+                            echo "<p>There are no candidates for this election.</p>";
                         }
                     } else {
                         echo "Oops! Something went wrong. Please try again later.";

@@ -25,20 +25,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 </head>
 <body>
 <header>
-    <div class="navbar navbar-dark bg-dark box-shadow">
-        <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
-                <strong>AGM Test Voting System</strong>
-            </a>
-        </div>
-    </div>
+    <?php include "navigation.php"; ?>
 </header>
 
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">anySociety AGM Voting System</h1>
-            <p class="lead text-muted">Custom Voting System for the anySociety AGM</p>
+            <h1 class="jumbotron-heading">CULA AGM Election Voting</h1>
+            <p class="lead text-muted">This page allows you to vote in and see the results of elections at this AGM</p>
         </div>
     </section>
     <div class="container-sm">
@@ -70,7 +64,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                     case 1:
                                         echo "<h1 class='font-weight-light'>Vote in election for <b>" . $position_name . "</b></h1>";
                                         echo "<h2 class='font-weight-light'>There are <b>" . $positions_available . "</b> positions available for " . $position_name . "</h2>";
-                                        echo "<p class='text-secondary'> Technical Information: Election ID = <span id='election_id'>" . $election_id . "</span>";
+                                        echo "<p class='text-secondary'> Technical Information: Election ID = <span id='election_id'>" . $election_id . "</span></p>";
 
                                         display_voting_system($election_id, $mysqli);
                                         break;

@@ -12,6 +12,40 @@ if (!$_SESSION["administrator"]) {
     exit;
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $position_name = trim($_POST["position_name"]);
+    $positions_available = trim($_POST["positions_available"]);
+
+    if ($position_name != "") {
+        require_once "config.php";
+        /** @var $mysqli mysqli */
+
+        // Prepare an insert statement
+        $sql_write_election = "INSERT INTO elections (position_name, positions_available) VALUES (?, ?)";
+
+        if ($stmt_write_election = $mysqli->prepare($sql_write_election)) {
+            // Bind variables to the prepared statement as parameters
+            $stmt_write_election->bind_param("si", $param_position_name, $param_positions_available);
+
+            // Set parameters
+            $param_position_name = $position_name;
+            $param_positions_available = $positions_available;
+
+            // Attempt to execute the prepared statement
+            if ($stmt_write_election->execute()) {
+                // Redirect to login page
+                header("location: create_election.php");
+                exit;
+            } else {
+                echo $mysqli->error;
+            }
+
+            // Close statement
+            $stmt_write_election->close();
+        }
+    }
+}
 
 ?>
 
@@ -31,90 +65,188 @@ if (!$_SESSION["administrator"]) {
 </head>
 <body>
 <header>
-    <div class="navbar navbar-dark bg-dark box-shadow">
-        <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
-                <strong>AGM Test Voting System</strong>
-            </a>
-        </div>
-    </div>
+    <?php include "navigation.php"; ?>
 </header>
 
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">anySociety AGM Election Creation</h1>
-            <p class="lead text-muted">Create Elections for your AGM Here</p>
+            <h1 class="jumbotron-heading">CULA AGM Election Management</h1>
+            <p class="lead text-muted">This section allows you to create and manage elections for your AGM.</p>
         </div>
     </section>
-    <div class="container-sm mb-5">
-        <div class="page-header">
-            <h1 class="font-weight-light">For you AGM, you currently have the following elections planned:</h1>
-        </div>
+    <div class="container-sm">
+        <?php
+        if (isset($_GET['delete_election'])){
+            require_once "config.php";
+            /** @var $mysqli mysqli */
+            $delete_election_id = $_GET['delete_election'];
+
+
+            $sql_delete_row = "DELETE FROM elections WHERE id = ?";
+            if ($stmt_delete_row = $mysqli->prepare($sql_delete_row)) {
+                $stmt_delete_row->bind_param("i", $delete_election_id);
+
+                if ($stmt_delete_row->execute()) {
+                    echo "<h4 class='font-weight-light text-success'> You have successfully deleted election id " . $delete_election_id . " from your AGM</h4>";
+                }
+                else{
+                    echo $mysqli->error;
+                }
+
+            }
+            $stmt_delete_row->close();
+
+        }
+
+        if (isset($_GET['change_status']) && isset($_GET['change_election']) ){
+            require_once "config.php";
+            /** @var $mysqli mysqli */
+
+            $change_election_id = $_GET['change_election'];
+            $change_election_status = $_GET['change_status'];
+
+            $sql_change_status = "UPDATE elections SET status = ? WHERE id = ?";
+
+            if ($stmt_change_status = $mysqli->prepare($sql_change_status)) {
+                $stmt_change_status->bind_param("ii", $change_election_status, $change_election_id);
+
+                if ($stmt_change_status->execute()) {
+                    echo "<h4 class='font-weight-light text-success'> You have successfully updated the status of election id " . $change_election_id . " to ". $change_election_status ."</h4>";
+                }
+                else{
+                    echo $mysqli->error;
+                }
+
+            }
+            $stmt_change_status->close();
+
+        }
+
+
+        ?>
     </div>
 
-    <div class="container-md">
-        <table class="table table-hover">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Position Name</th>
-                <th scope="col">Positions Available</th>
-                <th scope="col">Candidates</th>
-                <th scope="col">Status</th>
-            </tr>
-            </thead>
-            <tbody>
-
+    <div class="container-sm">
+            <h1 class="font-weight-light">For you AGM, you currently have the following elections planned:</h1>
             <?php
             require_once "config.php";
             /** @var $mysqli mysqli */
 
-            $stmt = "SELECT id, position_name, positions_available, status FROM elections";
-            $result = $mysqli->query($stmt);
+            $sql_get_elections = "SELECT id, position_name, positions_available, status FROM elections";
+            if ($stmt_get_elections = $mysqli->prepare($sql_get_elections)) {
+                if ($stmt_get_elections->execute()) {
+                    $stmt_get_elections->store_result();
 
-            if ($result->num_rows > 0) {
-                // output data of each row
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<th scope='row'>" . $row["id"] . "</th>";
-                    echo "<td>" . $row["position_name"] . "</td>";
-                    echo "<td>" . $row["positions_available"] . "</td>";
-                    echo "<td> <a href='#'>View/Edit Candidates</a> </td>";
+                    if ($stmt_get_elections->num_rows > 0) {
+                        echo "<table class='table table-hover mt-4'>";
+                        echo "<thead class='thead-dark'>";
+                        echo "<tr>";
+                        echo "<th scope='col'>#</th>";
+                        echo "<th scope='col'>Position Name</th>";
+                        echo "<th scope='col'>Positions Available</th>";
+                        echo "<th scope='col'>Candidates</th>";
+                        echo "<th scope='col'>Status</th>";
+                        echo "<th scope='col'>Delete Election</th>";
+                        echo "</tr>";
+                        echo "</thead>";
+                        echo "<tbody>";
 
-                    $status_text = "";
+                        $stmt_get_elections->bind_result($r_election_id, $r_position_name, $r_positions, $r_status);
 
-                    switch ($row["status"]) {
-                        case 2:
-                            $status_text = "<td class='text-success'>Election Completed - <a href='#' 
-                                                class='text-success'>See results</a></td>";
-                            break;
-                        case 1:
-                            $status_text = "<td class='text-danger'>Election Underway - <a href='#' 
-                                                class='text-danger'>Stop Election</a></td>";
-                            break;
+                        while ($stmt_get_elections->fetch()) {
+                            echo "<tr>";
+                            echo "<th scope='row'>" . $r_election_id . "</th>";
+                            echo "<td>" . $r_position_name . "</td>";
+                            echo "<td>" . $r_positions . "</td>";
+                            echo "<td> <a href='edit_candidates.php?election_id=" . $r_election_id . "'>View/Edit Candidates</a> </td>";
 
-                        case 0:
-                            $status_text = "<td class='text-warning'>Election Unbegun - <a href='#' 
-                                                class='text-success'>Start Election</a></td>";
-                            break;
+                            $status_text = "";
+
+                            switch ($r_status) {
+                                case 2:
+                                    $status_text = "<td class='text-success'>Election Completed - <a href=
+                                                        'vote.php?election_id=" . $r_election_id . "' 
+                                                        class='text-success'>See results</a></td>";
+                                    break;
+                                case 1:
+                                    $status_text = "<td class='text-danger'>Election Underway - <a href=
+                                                        '?change_election=" . $r_election_id . "&change_status=" . 2 ."' 
+                                                        class='text-danger'>Stop Election</a></td>";
+                                    break;
+
+                                case 0:
+                                    $status_text = "<td class='text-warning'>Election Not Yet Started - <a href=
+                                                        '?change_election=" . $r_election_id . "&change_status=" . 1 ."' 
+                                                        class='text-success'>Start Election</a></td>";
+                                    break;
+                            }
+                            echo $status_text;
+
+                            echo "<td>";
+                            echo "<a type='button' class='btn btn-danger' href = '?delete_election=" . $r_election_id . "'>Delete</a>";
+                            echo "</td>";
+
+                        }
+                        echo "</tbody>";
+                        echo "</table>";
+
+                    } else {
+                        echo "<h4 class='font-weight-light text-danger'> There are no elections scheduled your AGM</h4>";
+
                     }
-                    echo $status_text;
-
-                    echo "</tr>";
+                } else {
+                    echo "Oops! Something went wrong. Please try again later.";
                 }
-            } else {
-                echo "0 results";
+                $stmt_get_elections->close();
             }
 
             $mysqli->close();
 
             ?>
-            </tbody>
-        </table>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addElectionModal">
+                Add additional election.
+            </button>
+
+
     </div>
 </main>
 
+<div class="modal fade" id="addElectionModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addElectionModalLabel">Add Election</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                    <div class="form-group">
+                        <label for="position_name">Position Name</label>
+                        <input type="text" name="position_name" class="form-control" id="position_name"
+                               placeholder="Position Name (e.g. Publications Officer)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="positions_available">Positions Available</label>
+                        <input type="number" name="positions_available" class="form-control" id="positions_available"
+                               placeholder="Positions Available (e.g. 3)">
+                    </div>
+
+                    <div class="form-group mt-2">
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                        <input type="reset" class="btn btn-secondary" value="Reset">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

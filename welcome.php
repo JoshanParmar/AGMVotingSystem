@@ -25,20 +25,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 </head>
 <body>
 <header>
-    <div class="navbar navbar-dark bg-dark box-shadow">
-        <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
-                <strong>AGM Test Voting System</strong>
-            </a>
-        </div>
-    </div>
+    <?php include "navigation.php"; ?>
 </header>
 
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">anySociety AGM Voting System</h1>
-            <p class="lead text-muted">Custom Voting System for the anySociety AGM</p>
+            <h1 class="jumbotron-heading">CULA AGM Online</h1>
+            <p class="lead text-muted">Online AGM Management System Created by Joshan Parmar for the Cambridge Uni Liberal Association</p>
         </div>
     </section>
     <div class="container-sm">
@@ -48,13 +42,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
         </div>
         <p>
-            <a href="votes-list.php" class="btn btn-primary">Vote in AGM</a>
+            <a href="votes-list.php" class="btn btn-primary my-1">Vote in AGM</a>
             <?php
             if ($_SESSION["administrator"]){
-                echo "<a href='create_election.php' class='btn btn-secondary'>Create Elections</a>";
+                echo "<a href='create_election.php' class='btn btn-secondary my-1'>Create Elections</a>";
             } ?>
-            <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
-            <a href="logout.php" class="btn btn-danger">Sign Out of Your Account</a>
+            <a href="logout.php" class="btn btn-danger my-1">Sign Out of Your Account</a>
         </p>
     </div>
 </main>
