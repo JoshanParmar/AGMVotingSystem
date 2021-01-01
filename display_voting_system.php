@@ -33,7 +33,6 @@ function display_voting_system($election_id, mysqli $mysqli)
                             echo "</ul>";
                             echo "<p>";
                             echo "<a href='#' class='btn btn-primary my-2' id='vote'>Vote</a>";
-                            echo "<a href='#' class='btn btn-secondary my-2'>Abstain</a>";
                             echo "</p>";
                         } else {
                             echo "<p>There are no candidates for this election.</p>";

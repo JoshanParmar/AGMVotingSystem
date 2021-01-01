@@ -7,11 +7,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
+
+// Check if the user is an administrator, otherwise redidrect them to the homepage
 if (!$_SESSION["administrator"]) {
-    header("location: permission.php");
+    header("location: welcome.php");
     exit;
 }
 
+// Create the new election in the SQL table
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $position_name = trim($_POST["position_name"]);
@@ -21,27 +24,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         require_once "config.php";
         /** @var $mysqli mysqli */
 
-        // Prepare an insert statement
         $sql_write_election = "INSERT INTO elections (position_name, positions_available) VALUES (?, ?)";
 
         if ($stmt_write_election = $mysqli->prepare($sql_write_election)) {
-            // Bind variables to the prepared statement as parameters
             $stmt_write_election->bind_param("si", $param_position_name, $param_positions_available);
 
-            // Set parameters
             $param_position_name = $position_name;
             $param_positions_available = $positions_available;
 
-            // Attempt to execute the prepared statement
+            // Refresh the page on complete
             if ($stmt_write_election->execute()) {
-                // Redirect to login page
                 header("location: create_election.php");
                 exit;
             } else {
                 echo $mysqli->error;
             }
 
-            // Close statement
             $stmt_write_election->close();
         }
     }
@@ -77,7 +75,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </section>
     <div class="container-sm">
         <?php
-        if (isset($_GET['delete_election'])){
+
+        // If user has just clicked delete election, delete the election from the SQL table
+        if (isset($_GET['delete_election'])) {
             require_once "config.php";
             /** @var $mysqli mysqli */
             $delete_election_id = $_GET['delete_election'];
@@ -89,8 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if ($stmt_delete_row->execute()) {
                     echo "<h4 class='font-weight-light text-success'> You have successfully deleted election id " . $delete_election_id . " from your AGM</h4>";
-                }
-                else{
+                } else {
                     echo $mysqli->error;
                 }
 
@@ -99,7 +98,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         }
 
-        if (isset($_GET['change_status']) && isset($_GET['change_election']) ){
+        // If the user has just clicked change election status, make the change to the election status in the SQL table
+        if (isset($_GET['change_status']) && isset($_GET['change_election'])) {
             require_once "config.php";
             /** @var $mysqli mysqli */
 
@@ -112,9 +112,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt_change_status->bind_param("ii", $change_election_status, $change_election_id);
 
                 if ($stmt_change_status->execute()) {
-                    echo "<h4 class='font-weight-light text-success'> You have successfully updated the status of election id " . $change_election_id . " to ". $change_election_status ."</h4>";
-                }
-                else{
+                    echo "<h4 class='font-weight-light text-success'> You have successfully updated the status of election id " . $change_election_id . " to " . $change_election_status . "</h4>";
+                } else {
                     echo $mysqli->error;
                 }
 
@@ -125,88 +124,90 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         ?>
-    </div>
 
-    <div class="container-sm">
-            <h1 class="font-weight-light">For you AGM, you currently have the following elections planned:</h1>
-            <?php
-            require_once "config.php";
-            /** @var $mysqli mysqli */
+        <h1 class="font-weight-light">For you AGM, you currently have the following elections planned:</h1>
 
-            $sql_get_elections = "SELECT id, position_name, positions_available, status FROM elections";
-            if ($stmt_get_elections = $mysqli->prepare($sql_get_elections)) {
-                if ($stmt_get_elections->execute()) {
-                    $stmt_get_elections->store_result();
+        <?php
 
-                    if ($stmt_get_elections->num_rows > 0) {
-                        echo "<table class='table table-hover mt-4'>";
-                        echo "<thead class='thead-dark'>";
+        require_once "config.php";
+        /** @var $mysqli mysqli */
+
+        // Get list of elections from the SQL table and create a table on the HTML page displaying the list of elections
+        $sql_get_elections = "SELECT id, position_name, positions_available, status FROM elections";
+        if ($stmt_get_elections = $mysqli->prepare($sql_get_elections)) {
+            if ($stmt_get_elections->execute()) {
+                $stmt_get_elections->store_result();
+
+                if ($stmt_get_elections->num_rows > 0) {
+                    echo "<table class='table table-hover mt-4'>";
+                    echo "<thead class='thead-dark'>";
+                    echo "<tr>";
+                    echo "<th scope='col'>#</th>";
+                    echo "<th scope='col'>Position Name</th>";
+                    echo "<th scope='col'>Positions Available</th>";
+                    echo "<th scope='col'>Candidates</th>";
+                    echo "<th scope='col'>Status</th>";
+                    echo "<th scope='col'>Delete Election</th>";
+                    echo "</tr>";
+                    echo "</thead>";
+                    echo "<tbody>";
+
+                    $stmt_get_elections->bind_result($r_election_id, $r_position_name, $r_positions, $r_status);
+
+                    while ($stmt_get_elections->fetch()) {
                         echo "<tr>";
-                        echo "<th scope='col'>#</th>";
-                        echo "<th scope='col'>Position Name</th>";
-                        echo "<th scope='col'>Positions Available</th>";
-                        echo "<th scope='col'>Candidates</th>";
-                        echo "<th scope='col'>Status</th>";
-                        echo "<th scope='col'>Delete Election</th>";
-                        echo "</tr>";
-                        echo "</thead>";
-                        echo "<tbody>";
+                        echo "<th scope='row'>" . $r_election_id . "</th>";
+                        echo "<td>" . $r_position_name . "</td>";
+                        echo "<td>" . $r_positions . "</td>";
+                        echo "<td> <a href='edit_candidates.php?election_id=" . $r_election_id . "'>View/Edit Candidates</a> </td>";
 
-                        $stmt_get_elections->bind_result($r_election_id, $r_position_name, $r_positions, $r_status);
+                        $status_text = "";
 
-                        while ($stmt_get_elections->fetch()) {
-                            echo "<tr>";
-                            echo "<th scope='row'>" . $r_election_id . "</th>";
-                            echo "<td>" . $r_position_name . "</td>";
-                            echo "<td>" . $r_positions . "</td>";
-                            echo "<td> <a href='edit_candidates.php?election_id=" . $r_election_id . "'>View/Edit Candidates</a> </td>";
-
-                            $status_text = "";
-
-                            switch ($r_status) {
-                                case 2:
-                                    $status_text = "<td class='text-success'>Election Completed - <a href=
+                        switch ($r_status) {
+                            case 2:
+                                $status_text = "<td class='text-success'>Election Completed - <a href=
                                                         'vote.php?election_id=" . $r_election_id . "' 
                                                         class='text-success'>See results</a></td>";
-                                    break;
-                                case 1:
-                                    $status_text = "<td class='text-danger'>Election Underway - <a href=
-                                                        '?change_election=" . $r_election_id . "&change_status=" . 2 ."' 
+                                break;
+                            case 1:
+                                $status_text = "<td class='text-danger'>Election Underway - <a href=
+                                                        '?change_election=" . $r_election_id . "&change_status=" . 2 . "' 
                                                         class='text-danger'>Stop Election</a></td>";
-                                    break;
+                                break;
 
-                                case 0:
-                                    $status_text = "<td class='text-warning'>Election Not Yet Started - <a href=
-                                                        '?change_election=" . $r_election_id . "&change_status=" . 1 ."' 
+                            case 0:
+                                $status_text = "<td class='text-warning'>Election Not Yet Started - <a href=
+                                                        '?change_election=" . $r_election_id . "&change_status=" . 1 . "' 
                                                         class='text-success'>Start Election</a></td>";
-                                    break;
-                            }
-                            echo $status_text;
-
-                            echo "<td>";
-                            echo "<a type='button' class='btn btn-danger' href = '?delete_election=" . $r_election_id . "'>Delete</a>";
-                            echo "</td>";
-
+                                break;
                         }
-                        echo "</tbody>";
-                        echo "</table>";
+                        echo $status_text;
 
-                    } else {
-                        echo "<h4 class='font-weight-light text-danger'> There are no elections scheduled your AGM</h4>";
+                        echo "<td>";
+                        echo "<a type='button' class='btn btn-danger' href = '?delete_election=" . $r_election_id . "'>Delete</a>";
+                        echo "</td>";
 
                     }
+                    echo "</tbody>";
+                    echo "</table>";
+
                 } else {
-                    echo "Oops! Something went wrong. Please try again later.";
+                    echo "<h4 class='font-weight-light text-danger'> There are no elections scheduled your AGM</h4>";
+
                 }
-                $stmt_get_elections->close();
+            } else {
+                echo "Oops! Something went wrong. Please try again later.";
             }
+            $stmt_get_elections->close();
+        }
 
-            $mysqli->close();
+        $mysqli->close();
 
-            ?>
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addElectionModal">
-                Add additional election.
-            </button>
+        ?>
+
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addElectionModal">
+            Add additional election
+        </button>
 
 
     </div>
