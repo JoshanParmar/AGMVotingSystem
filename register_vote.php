@@ -42,42 +42,43 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         $i = 0;
         $vote_string = "";
 
+        // Convert order of votes into storable string
         foreach ($_GET['vote'] as $value) {
             $vote_string = $vote_string . $value . ";";
             $i++;
         }
+        // Get the election ID from the URL
         $election_id = $_GET["election_id"][0];
+
+        // Check if the user has already voted
         $sql_get_if_voted = "SELECT id FROM users_voted WHERE user_id = ? AND election_id = ?";
 
         if ($stmt_get_if_voted = $mysqli->prepare($sql_get_if_voted)) {
             $stmt_get_if_voted->bind_param("ii", $_SESSION["id"], $election_id);
 
 
-            // Attempt to execute the prepared statement
             if ($stmt_get_if_voted->execute()) {
-                // store result
                 $stmt_get_if_voted->store_result();
 
                 if ($stmt_get_if_voted->num_rows == 1) {
                     echo "<h2 class='font-weight-light'>You have already voted in this election.</h2>";
                 } else {
+                    // If they have not already voted, write their vote into the votes table with a voter id.
                     $voter_token = uniqid('', true);
                     $sql_store_vote = "INSERT INTO votes (vote_string, election_id, voter_token) VALUES (?, ?, ?)";
 
                     if ($stmt_store_vote = $mysqli->prepare($sql_store_vote)) {
-                        // Bind variables to the prepared statement as parameters
                         $stmt_store_vote->bind_param("sis", $vote_string, $election_id, $voter_token);
-
-                        // Attempt to execute the prepared statement
                         if ($stmt_store_vote->execute()) {
+
                             $sql_store_user_voted = "INSERT INTO users_voted (user_id, election_id) VALUES (?, ?)";
 
                             if ($stmt_store_user_voted = $mysqli->prepare($sql_store_user_voted)) {
-                                // Bind variables to the prepared statement as parameters
                                 $stmt_store_user_voted->bind_param("ii", $_SESSION["id"], $election_id);
 
-                                // Attempt to execute the prepared statement
+
                                 if ($stmt_store_user_voted->execute()) {
+                                    // Notify the user that their vote has been recorded.
                                     echo "<h2 class='font-weight-light'>Your vote has been recorded.</h2>";
                                     echo "<h3 class='font-weight-light'>Your unique voter token was ". $voter_token.
                                         ". Please make a note of this and do not share this with anyone else.</h3>";
@@ -86,13 +87,11 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                     echo "Something went wrong. Please try again later.";
                                 }
 
-                                // Close statement
                                 $stmt_store_user_voted->close();
                             }
                         } else {
                             echo "Something went wrong. Please try again later.";
                         }
-                        // Close statement
                         $stmt_store_vote->close();
                     }
                 }
@@ -100,7 +99,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                 echo "Oops! Something went wrong. Please try again later.";
             }
 
-            // Close statement
             $stmt_get_if_voted->close();
         }
 

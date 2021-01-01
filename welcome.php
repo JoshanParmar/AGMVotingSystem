@@ -44,8 +44,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         <p>
             <a href="votes-list.php" class="btn btn-primary my-1">Vote in AGM</a>
             <?php
+            // If the user is an administrator, give them the button to access the manage elections page
             if ($_SESSION["administrator"]){
-                echo "<a href='create_election.php' class='btn btn-secondary my-1'>Create Elections</a>";
+                echo "<a href='create_election.php' class='btn btn-secondary my-1'>Manage Elections</a>";
             } ?>
             <a href="logout.php" class="btn btn-danger my-1">Sign Out of Your Account</a>
         </p>

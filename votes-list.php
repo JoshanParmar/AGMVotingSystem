@@ -43,11 +43,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             require_once "config.php";
             /** @var $mysqli mysqli */
 
+            // Get the list of elections
             $stmt = "SELECT id, position_name, positions_available, status FROM elections";
             $result = $mysqli->query($stmt);
 
+            // Display the list of elections as clickable buttons
             if ($result->num_rows > 0) {
-                // output data of each row
                 while ($row = $result->fetch_assoc()) {
 
                     $button_class = "";
@@ -57,7 +58,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                     switch ($row["status"]) {
                         case 0:
                             $button_class = "btn-secondary";
-                            $button_text = $row["position_name"] . " - Election unbegun";
+                            $button_text = $row["position_name"] . " - Election yet to begin";
                             $button_link = "vote.php?election_id=".$row["id"];
                             break;
                         case 1:
@@ -72,12 +73,13 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                             $button_link = "vote.php?election_id=".$row["id"];
                             break;
                     }
-                    echo "<a href='" . $button_link .  "#' class='btn " . $button_class . " my-2'>" . $button_text . "</a> <br>";
+                    echo "<a href='" . $button_link .  "#' class='btn " . $button_class . " my-2'>" . $button_text
+                        . "</a> <br>";
 
                     echo "</tr>";
                 }
             } else {
-                echo "0 results";
+                echo "No elections have been scheduled for you AGM yet";
             }
 
             $mysqli->close();

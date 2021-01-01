@@ -1,3 +1,4 @@
+// Copied code to make jquery elements work on mobile
 (function ($) {
     // Detect touch support
     $.support.touch = 'ontouchend' in document;
@@ -98,19 +99,19 @@
     };
 })(jQuery);
 
+// Enable the sorting ability of the jquery list
 $(function () {
     const $sortable = $("#sortable");
     $sortable.sortable();
     $sortable.disableSelection();
 });
 
+// Redirect user to register vote php page once voting is complete
 document.getElementById("vote").addEventListener("click", function () {
     let serializedIDs = $("#sortable").sortable('serialize');
     function getElectionId() {
         return document.getElementById('election_id').innerText;
     }
-
     serializedIDs = "election_id[]="+getElectionId()+"&"+serializedIDs;
-
     window.location.href = "register_vote.php"+"?"+serializedIDs;
 })

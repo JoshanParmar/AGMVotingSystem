@@ -1,4 +1,6 @@
 <?php
+
+// Get array of candidates in the election, used only in displaying results of the election
 function get_print_candidates_array($election_id, mysqli $mysqli){
     $candidates_array = array();
     $sql_get_candidates = "SELECT id, username FROM candidates WHERE election_id = ?";

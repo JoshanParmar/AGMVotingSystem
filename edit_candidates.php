@@ -8,16 +8,19 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     exit;
 }
 
+// Check if the user is an administrator if not redirect them to welcome
 if (!$_SESSION["administrator"]) {
-    header("location: permission.php");
+    header("location: welcome.php");
     exit;
 }
 
+// Check if an election id has been provided to display the candidates for, if not redirect them to create_elections
 if (!isset($_GET["election_id"])) {
-    header("location: login.php");
+    header("location: create_election.php");
     exit;
 }
 
+// If the user has just completed the add candidates form, if so add the candidate to the SQL table
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $name = trim($_POST["name"]);
@@ -25,23 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($name != "") {
         require_once "config.php";
         /** @var $mysqli mysqli */
-
-        // Prepare an insert statement
         $sql_write_candidate = "INSERT INTO candidates (username, election_id) VALUES (?, ?)";
-
         if ($stmt_write_candidate = $mysqli->prepare($sql_write_candidate)) {
-            // Bind variables to the prepared statement as parameters
             $stmt_write_candidate->bind_param("si", $param_name, $_GET["election_id"]);
-
-            // Set parameters
             $param_name = $name;
-
-            // Attempt to execute the prepared statement
             if (!($stmt_write_candidate->execute())) {
                 echo $mysqli->error;
             }
-
-            // Close statement
             $stmt_write_candidate->close();
         }
     }
@@ -82,10 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <a type='button' class='btn btn-secondary mb-3' href='create_election.php'>Return to list of elections</a>
 
+
         <?php
         require_once "config.php";
         /** @var $mysqli mysqli */
 
+        // If the user has just requested the deletion of a candidate, remove it from the list
         if (isset($_GET['delete_id'])){
             $delete_id = $_GET['delete_id'];
 
@@ -102,13 +97,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             }
             $stmt_delete_candidate->close();
-
         }
 
         $election_id = $_GET["election_id"];
 
+        // Get the details of the election
         $sql_get_election_details = "SELECT position_name, status FROM elections where id = ?";
-
         if ($stmt_get_election_details = $mysqli->prepare($sql_get_election_details)) {
             $stmt_get_election_details->bind_param("i", $election_id);
 
@@ -120,6 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     if ($stmt_get_election_details->fetch()) {
 
+                        // If the election exists, get the candidates of the election
                         $sql_get_candidates = "SELECT id, username FROM candidates WHERE election_id = ?";
 
                         if ($stmt_get_candidates = $mysqli->prepare($sql_get_candidates)) {
@@ -128,9 +123,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             if ($stmt_get_candidates->execute()) {
                                 $stmt_get_candidates->store_result();
                                 if ($stmt_get_candidates->num_rows > 0) {
+
+                                    // Display the candidates for the election in the format depending on the status
                                     switch ($status){
                                         case 0:
-                                            echo "<h3 class='font-weight-light'>In your election for " . $position_name .", you have the following candidates: </h3>";
+                                            echo "<h3 class='font-weight-light'>In your election for " . $position_name
+                                                .", you have the following candidates: </h3>";
                                             echo "<table class='table table-hover mt-4'>";
                                             echo "<thead class='thead-dark'>";
                                             echo "<tr>";
@@ -161,7 +159,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                             break;
                                         case 1:
-                                            echo "<h3 class='font-weight-light'>This election is underway. You can no longer edit candidates.</h3>";
+                                            echo "<h3 class='font-weight-light'>This election is underway. You can no 
+                                                       longer edit candidates.</h3>";
                                             echo "<h5>The candidates were as follows:</h5>";
                                             echo "<ul class='list-group list-group-flush'>";
                                             $stmt_get_candidates->bind_result($r_id, $r_username);
@@ -172,7 +171,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             break;
 
                                         case 2:
-                                            echo "<h3 class='font-weight-light'>This election has finished. You can no longer edit candidates.</h3>";
+                                            echo "<h3 class='font-weight-light'>This election has finished. You can no 
+                                                longer edit candidates.</h3>";
                                             echo "<h5>The candidates were as follows:</h5>";
                                             echo "<ul class='list-group list-group-flush'>";
                                             $stmt_get_candidates->bind_result($r_id, $r_username);
@@ -181,30 +181,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             }
                                             echo "</ul>";
 
-                                            echo "<p class='mt-3'> <a href='vote.php?election_id=" . $election_id . "'>Click Here</a>
-                                                   to view the results of this election";
+                                            echo "<p class='mt-3'> <a href='vote.php?election_id=" . $election_id . "'>
+                                                Click Here</a> to view the results of this election";
                                             break;
 
                                     }
                                 } else {
                                     switch ($status){
+                                        // If there are no candidates, alert the user to this, in the correct format for
+                                        // the status of the election
                                         case 0:
-                                            echo "<h3 class='font-weight-light'>In your election for " . $position_name .", you have the following candidates: </h3>";
+                                            echo "<h3 class='font-weight-light'>In your election for " . $position_name
+                                                .", you have the following candidates: </h3>";
                                             echo "<p>There are no candidates for this election.</p>";
                                             echo "<button type='button' class='btn btn-success' data-toggle='modal' 
                                                     data-target='#addCandidateModal'>Add additional candidate</button>";
                                             break;
 
                                         case 1:
-                                            echo "<h3 class='font-weight-light'>This election is underway. You can no longer edit candidates.</h3>";
+                                            echo "<h3 class='font-weight-light'>This election is underway. You can no 
+                                                longer edit candidates.</h3>";
                                             echo "<p>There are no candidates for this election.</p>";
                                             break;
 
                                         case 2:
-                                            echo "<h3 class='font-weight-light'>This election has finished. You can no longer edit candidates.</h3>";
+                                            echo "<h3 class='font-weight-light'>This election has finished. You can no 
+                                                longer edit candidates.</h3>";
                                             echo "<p>There were no candidates for this election.</p>";
-                                            echo "<p class='mt-3'> <a href='vote.php?election_id=" . $election_id . "'>Click Here</a>
-                                                   to view the results of this election";
+                                            echo "<p class='mt-3'> <a href='vote.php?election_id=" . $election_id . "'>
+                                                Click Here</a> to view the results of this election";
                                             break;
                                     }
                                 }

@@ -49,6 +49,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             if(isset($_GET['election_id'])){
                 $election_id = $_GET['election_id'];
 
+                // Get the status of the election and display the appropriate action to the user.
                 $sql_get_election_data = "SELECT position_name, positions_available, status FROM elections WHERE id = ?";
                 if ($stmt_get_election_data = $mysqli->prepare($sql_get_election_data)) {
                     $stmt_get_election_data->bind_param("i", $election_id);
@@ -57,7 +58,8 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                         $stmt_get_election_data->store_result();
 
                         if ($stmt_get_election_data->num_rows == 1) {
-                            $stmt_get_election_data->bind_result($position_name, $positions_available, $status);
+                            $stmt_get_election_data->bind_result($position_name, $positions_available,
+                                $status);
                             if ($stmt_get_election_data->fetch()) {
                                 switch ($status){
                                     case 0:
@@ -65,9 +67,14 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                         display_candidates($election_id, $mysqli);
                                         break;
                                     case 1:
-                                        echo "<h1 class='font-weight-light'>Vote in election for <b>" . $position_name . "</b></h1>";
-                                        echo "<h2 class='font-weight-light'>There are <b>" . $positions_available . "</b> positions available for " . $position_name . "</h2>";
-                                        echo "<p class='text-secondary'> Technical Information: Election ID = <span id='election_id'>" . $election_id . "</span></p>";
+                                        echo "<h1 class='font-weight-light'>Vote in election for <b>" . $position_name
+                                            . "</b></h1>";
+                                        echo "<h2 class='font-weight-light'>There are <b>" . $positions_available
+                                            . "</b> positions available for " . $position_name . "</h2>";
+                                        echo "<p class='text-secondary'> Technical Information: Election ID = 
+                                            <span id='election_id'>" . $election_id . "</span></p>";
+                                        echo "<p> Drag and drop the candidates into the order you want to vote for 
+                                            them in</p>";
 
                                         display_voting_system($election_id, $mysqli);
                                         break;

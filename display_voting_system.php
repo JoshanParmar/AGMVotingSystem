@@ -1,6 +1,6 @@
 <?php
-function display_voting_system($election_id, mysqli $mysqli)
-{
+function display_voting_system($election_id, mysqli $mysqli){
+    // Find out if the user has voted
     $sql_get_if_voted = "SELECT id FROM users_voted WHERE user_id = ? AND election_id = ?";
     if ($stmt_get_if_voted = $mysqli->prepare($sql_get_if_voted)) {
         $stmt_get_if_voted->bind_param("ii", $_SESSION["id"], $election_id);
@@ -13,6 +13,7 @@ function display_voting_system($election_id, mysqli $mysqli)
                 exit;
             } else {
 
+                // If the user hasn't voted, get the candidates in the election
                 $sql_get_candidates = "SELECT id, username FROM candidates WHERE election_id = ?";
                 if ($stmt_get_candidates = $mysqli->prepare($sql_get_candidates)) {
                     $stmt_get_candidates->bind_param("i", $election_id);
@@ -21,6 +22,7 @@ function display_voting_system($election_id, mysqli $mysqli)
                         $stmt_get_candidates->store_result();
 
                         if ($stmt_get_candidates->num_rows > 0) {
+                            // If there are candidates, display them using the jquery sortable system
                             echo "<ul class='list-group' id='sortable'>";
 
                             $stmt_get_candidates->bind_result($r_candidate_id, $r_candidate_username);
