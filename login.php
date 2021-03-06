@@ -14,7 +14,7 @@ require_once "config.php";
 
 // Define variables and initialize with empty values
 $username = $password = "";
-$username_err = $password_err = "";
+$username_err = $password_err = $oth_err = "";
 
 // Processing form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate credentials
     if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
-        $sql = "SELECT id, username, password, administrator FROM users WHERE username = ?";
+        $sql = "SELECT id, username, password, administrator, verified, realname FROM users WHERE username = ?";
 
         if ($stmt = $mysqli->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
@@ -53,20 +53,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Check if username exists, if yes then verify password
                 if ($stmt->num_rows == 1) {
                     // Bind result variables
-                    $stmt->bind_result($id, $username, $hashed_password, $administrator);
+                    $stmt->bind_result($id, $username, $hashed_password, $administrator, $verified, $realname);
                     if ($stmt->fetch()) {
                         if (password_verify($password, $hashed_password)) {
-                            // Password is correct, so start a new session
-                            session_start();
+                            if ($verified) {
+                                // Password is correct, so start a new session
+                                session_start();
 
-                            // Store data in session variables
-                            $_SESSION["loggedin"] = true;
-                            $_SESSION["id"] = $id;
-                            $_SESSION["username"] = $username;
-                            $_SESSION["administrator"] = $administrator;
+                                // Store data in session variables
+                                $_SESSION["loggedin"] = true;
+                                $_SESSION["id"] = $id;
+                                $_SESSION["username"] = $username;
+                                $_SESSION["administrator"] = $administrator;
+                                $_SESSION["realname"] = $realname;
 
-                            // Redirect user to welcome page
-                            header("location: welcome.php");
+                                // Redirect user to welcome page
+                                header("location: welcome.php");
+                            } else {
+                                $oth_err = "Your account has not yet been verified - Please ask an admin to verify your account.";
+                            }
                         } else {
                             // Display an error message if password is not valid
                             $password_err = "The password you entered was not valid.";
@@ -102,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <title>anySociety AGM</title>
+    <title>CUDWS AGM</title>
 </head>
 <body>
 <header>
@@ -112,8 +117,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Login</h1>
-            <p class="lead text-muted">Please use the login credentials you were provided in your email to login.</p>
+            <h1 class="jumbotron-heading">CUDWS AGM Login</h1>
+            <p class="lead text-muted">Please create an account then login here.</p>
         </div>
     </section>
     <div class="container-sm">
@@ -134,8 +139,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-group">
                 <input type="submit" class="btn btn-primary" value="Login">
             </div>
-
-            <p>Don't have an account? <a href="register.php">Sign up now</a>.</p>
+            <h3 class="text-danger"><?php echo $oth_err; ?></h3>
+            <h2>Don't have an account? <a href="register.php">Sign up now</a>.</h2>
         </form>
     </div>
 

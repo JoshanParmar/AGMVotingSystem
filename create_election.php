@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <title>Hello, world!</title>
+    <title>CUDWS Elections</title>
 </head>
 <body>
 <header>
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Election Management</h1>
+            <h1 class="jumbotron-heading">CUDWS AGM Election Management</h1>
             <p class="lead text-muted">This section allows you to create and manage elections for your AGM.</p>
         </div>
     </section>
@@ -125,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         ?>
 
-        <h1 class="font-weight-light">For you AGM, you currently have the following elections planned:</h1>
+        <h1 class="font-weight-light">For your AGM, you currently have the following elections planned:</h1>
 
         <?php
 

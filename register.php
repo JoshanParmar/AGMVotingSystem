@@ -5,7 +5,7 @@ require_once "config.php";
 
 // Define variables and initialize with empty values
 $username = $password = $confirm_password = "";
-$username_err = $password_err = $confirm_password_err = "";
+$username_err = $password_err = $realname_err = $confirm_password_err = "";
 
 // Processing form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -41,7 +41,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->close();
         }
     }
-
+    // Validate name
+    if (empty(trim($_POST["realname"]))) {
+        $realname_err = "Please enter your name.";
+    } else {
+        $realname = trim($_POST["realname"]);
+    }
     // Validate password
     if (empty(trim($_POST["password"]))) {
         $password_err = "Please enter a password.";
@@ -62,17 +67,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Check input errors before inserting in database
-    if (empty($username_err) && empty($password_err) && empty($confirm_password_err)) {
+    if (empty($username_err) && empty($password_err) && empty($confirm_password_err) && empty($realname_err)) {
 
         // Prepare an insert statement
-        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $sql = "INSERT INTO users (username, password, realname) VALUES (?, ?, ?)";
 
         if ($stmt = $mysqli->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("ss", $param_username, $param_password);
+            $stmt->bind_param("sss", $param_username, $param_password, $param_realname);
 
             // Set parameters
             $param_username = $username;
+            $param_realname = $realname;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
 
             // Attempt to execute the prepared statement
@@ -105,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <title>anySociety AGM</title>
+    <title>CUDWS AGM</title>
 </head>
 <body>
 <header>
@@ -115,12 +121,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Registration</h1>
-            <p class="lead text-muted">Please speak to Freddie Poser before using this.</p>
+            <h1 class="jumbotron-heading">CUDWS AGM Registration</h1>
+            <p class="lead text-muted">Please register here - an admin will then approve you.</p>
         </div>
     </section>
     <div class="container-sm">
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+
+            <div class="form-group <?php echo (!empty($realname_err)) ? 'has-error' : ''; ?>">
+                <label for="realname">Name</label>
+                <input type="text" name="realname" class="form-control" id="realname" placeholder="Enter your Name">
+                <span class="help-block text-danger"><?php echo $realname_err; ?></span>
+            </div>
 
             <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
                 <label for="username">Username</label>

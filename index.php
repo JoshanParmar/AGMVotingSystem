@@ -1,14 +1,3 @@
-<?php
-// Initialize the session
-session_start();
-
-// Check if the user is logged in, if not then redirect him to login page
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: login.php");
-    exit;
-}
-?>
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -21,7 +10,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <title>CUDWS Elections</title>
+    <title>CUDWS AGM</title>
 </head>
 <body>
 <header>
@@ -31,26 +20,17 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">CUDWS AGM Online</h1>
-            <p class="lead text-muted">Online AGM Management System Created by Joshan Parmar for the CUDWS</p>
+            <h1 class="jumbotron-heading">CUDWS AGM Online System</h1>
+            <p class="lead text-muted">Welcome to the CUDWS online system for the AGM.</p>
         </div>
     </section>
-    <div class="container-sm">
-        <div class="page-header">
-            <h1 class="font-weight-light">Hi, <b><?php echo htmlspecialchars($_SESSION["realname"]); ?></b></h1>
-            <h1  class="font-weight-light"> Welcome to our site.</h1>
 
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <a href="login.php" class="btn btn-primary">Click here to login</a>
+            </div>
         </div>
-        <p>
-            <a href="votes-list.php" class="btn btn-primary my-1">Vote in AGM</a>
-            <?php
-            // If the user is an administrator, give them the button to access the manage elections page
-            if ($_SESSION["administrator"]){
-                echo "<a href='create_election.php' class='btn btn-info my-1'>Manage Elections</a>
-                      <a href='manage_users.php' class='btn btn-success my-1'>Manage Users</a>";
-            } ?>
-            <a href="logout.php" class="btn btn-danger my-1">Sign Out of Your Account</a>
-        </p>
     </div>
 </main>
 

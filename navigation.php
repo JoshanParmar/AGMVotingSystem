@@ -4,7 +4,7 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     <a href="#" class="navbar-brand d-flex align-items-center">
-                        <strong>CULA AGM Online</strong>
+                        <strong>CUDWS AGM Online</strong>
                     </a>
                 </li>
                 <li class="nav-item active">
