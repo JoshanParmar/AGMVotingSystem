@@ -24,14 +24,16 @@ if (!isset($_GET["election_id"])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $name = trim($_POST["name"]);
+    $manifesto_url = trim($_POST["manifesto-url"]);
 
     if ($name != "") {
         require_once "config.php";
         /** @var $mysqli mysqli */
-        $sql_write_candidate = "INSERT INTO candidates (username, election_id) VALUES (?, ?)";
+        $sql_write_candidate = "INSERT INTO candidates (username, election_id, manifesto_url) VALUES (?, ?, ?)";
         if ($stmt_write_candidate = $mysqli->prepare($sql_write_candidate)) {
-            $stmt_write_candidate->bind_param("si", $param_name, $_GET["election_id"]);
+            $stmt_write_candidate->bind_param("sis", $param_name, $_GET["election_id"], $param_url);
             $param_name = $name;
+            $param_url = $manifesto_url;
             if (!($stmt_write_candidate->execute())) {
                 echo $mysqli->error;
             }
@@ -115,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if ($stmt_get_election_details->fetch()) {
 
                         // If the election exists, get the candidates of the election
-                        $sql_get_candidates = "SELECT id, username FROM candidates WHERE election_id = ?";
+                        $sql_get_candidates = "SELECT id, username, manifesto_url FROM candidates WHERE election_id = ?";
 
                         if ($stmt_get_candidates = $mysqli->prepare($sql_get_candidates)) {
                             $stmt_get_candidates->bind_param("i", $election_id);
@@ -134,17 +136,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             echo "<tr>";
                                             echo "<th scope='col'>#</th>";
                                             echo "<th scope='col'>Candidate Name</th>";
+                                            echo "<th scope='col'>Manifesto</th>";
                                             echo "<th scope='col'>Delete Candidate</th>";
                                             echo "</tr>";
                                             echo "</thead>";
                                             echo "<tbody>";
 
-                                            $stmt_get_candidates->bind_result($r_id, $r_username);
+                                            $stmt_get_candidates->bind_result($r_id, $r_username, $r_manifesto_url);
 
                                             while ($stmt_get_candidates->fetch()) {
                                                 echo "<tr>";
                                                 echo "<th scope='row'>" . $r_id . "</th>";
                                                 echo "<td>" . $r_username . "</td>";
+                                                echo "<td>";
+                                                if ($r_manifesto_url != null) {
+                                                    echo "<a href='#' class='text-primary' data-toggle='modal' data-target='#manifestoModal' 
+                                                            data-url='". $r_manifesto_url ."' data-candidate_name='". $r_username
+                                                            . "'>Manifesto</a>";
+                                                }
+                                                echo "</td>";
                                                 echo "<td>";
                                                 echo "<a type='button' class='btn btn-danger' href = '?election_id=" .
                                                     $election_id . "&delete_id=" . $r_id . "'>Delete</a>";
@@ -163,9 +173,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                        longer edit candidates.</h3>";
                                             echo "<h5>The candidates were as follows:</h5>";
                                             echo "<ul class='list-group list-group-flush'>";
-                                            $stmt_get_candidates->bind_result($r_id, $r_username);
+                                            $stmt_get_candidates->bind_result($r_id, $r_username,$r_manifesto_url);
                                             while ($stmt_get_candidates->fetch()) {
-                                                echo "<p>" . $r_username . "</p>";
+                                                echo "<p>" . $r_username . " ";
+                                                if ($r_manifesto_url != null) {
+                                                    echo "<a href='#' class='text-primary' data-toggle='modal' data-target='#manifestoModal' 
+                                                            data-url='". $r_manifesto_url ."' data-candidate_name='". $r_username
+                                                        . "'>Manifesto</a>";
+                                                }
+                                                echo "</p>";
                                             }
                                             echo "</ul>";
                                             break;
@@ -175,9 +191,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 longer edit candidates.</h3>";
                                             echo "<h5>The candidates were as follows:</h5>";
                                             echo "<ul class='list-group list-group-flush'>";
-                                            $stmt_get_candidates->bind_result($r_id, $r_username);
+                                            $stmt_get_candidates->bind_result($r_id, $r_username,$r_manifesto_url);
                                             while ($stmt_get_candidates->fetch()) {
-                                                echo "<p>" . $r_username . "</p>";
+                                                echo "<p>" . $r_username . " ";
+                                                if ($r_manifesto_url != null) {
+                                                    echo "<a href='#' class='text-primary' data-toggle='modal' data-target='#manifestoModal' 
+                                                            data-url='". $r_manifesto_url ."' data-candidate_name='". $r_username
+                                                        . "'>Manifesto</a>";
+                                                }
+                                                echo "</p>";
                                             }
                                             echo "</ul>";
 
@@ -237,6 +259,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </main>
 
+
+<?php include "manifesto_modal.php" ?>
+
 <div class="modal fade" id="addCandidateModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -252,6 +277,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label for="name">Candidate Name</label>
                         <input type="text" name="name" class="form-control" id="name"
                                placeholder="Name (e.g. Freddie Poser)">
+                    </div>
+                    <div class="form-group">
+                        <label for="manifesto-url">Manifesto URL</label>
+                        <input type="text" name="manifesto-url" class="form-control" id="manifesto-url"
+                               placeholder="freddie-poser.png">
                     </div>
 
                     <div class="form-group mt-2">
@@ -278,6 +308,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+<script src="show_manifesto.js"></script>
 
 </body>
 </html>
