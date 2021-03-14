@@ -111,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <title>CUDWS AGM</title>
+    <title>CULA AGM</title>
 </head>
 <body>
 <header>
@@ -121,8 +121,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">CUDWS AGM Registration</h1>
-            <p class="lead text-muted">Please register here - an admin will then approve you.</p>
+            <h1 class="jumbotron-heading">CULA AGM Registration</h1>
+            <p class="lead text-muted">Please register here - an admin will then approve your account.</p>
         </div>
     </section>
     <div class="container-sm">

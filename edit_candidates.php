@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <title>CUDWS Elections</title>
+    <title>CULA Elections</title>
 </head>
 <body>
 <header>
@@ -66,8 +66,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">CUDWS AGM Election Creation</h1>
-            <p class="lead text-muted">Edit candidates standing in elections here here.</p>
+            <h1 class="jumbotron-heading">CULA AGM Election Management</h1>
+            <p class="lead text-muted">Edit candidates standing in elections here.</p>
         </div>
     </section>
     <div class="container-sm">

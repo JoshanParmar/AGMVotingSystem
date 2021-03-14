@@ -27,7 +27,7 @@ if (!$_SESSION["administrator"]) {
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <title>CUDWS Elections</title>
+    <title>CULA Elections</title>
 </head>
 <body>
 <header>
@@ -37,8 +37,8 @@ if (!$_SESSION["administrator"]) {
 <main>
     <section class="jumbotron text-center">
         <div class="container">
-            <h1 class="jumbotron-heading">CUDWS AGM Election Voting</h1>
-            <p class="lead text-muted">This page allows you to vote in and see the results of elections at this AGM</p>
+            <h1 class="jumbotron-heading">CULA AGM Election Voting</h1>
+            <p class="lead text-muted">This page is only for use by the ROs to add proxy votes - If you find yourself on this page and are not an RO, please contact the ROs immediately.</p>
         </div>
     </section>
     <div class="container-sm">
