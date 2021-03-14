@@ -147,6 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "<th scope='col'>Positions Available</th>";
                     echo "<th scope='col'>Candidates</th>";
                     echo "<th scope='col'>Status</th>";
+                    echo "<th scope='col'>Add Proxy Votes</th>";
                     echo "<th scope='col'>Delete Election</th>";
                     echo "</tr>";
                     echo "</thead>";
@@ -167,18 +168,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             case 2:
                                 $status_text = "<td class='text-success'>Election Completed - <a href=
                                                         'vote.php?election_id=" . $r_election_id . "' 
-                                                        class='text-success'>See results</a></td>";
+                                                        class='text-success'>See results</a></td>
+                                                        <td class='text-danger'>Election over - no votes can be added.</td>";
                                 break;
                             case 1:
                                 $status_text = "<td class='text-danger'>Election Underway - <a href=
                                                         '?change_election=" . $r_election_id . "&change_status=" . 2 . "' 
-                                                        class='text-danger'>Stop Election</a></td>";
+                                                        class='text-danger'>Stop Election</a></td>
+                                                        <td class='text-success'> 
+                                                        <a href='add_proxy_votes.php?election_id=" . $r_election_id
+                                                        . "'>Add Provy Votes</a></td>";
                                 break;
 
                             case 0:
                                 $status_text = "<td class='text-warning'>Election Not Yet Started - <a href=
                                                         '?change_election=" . $r_election_id . "&change_status=" . 1 . "' 
-                                                        class='text-success'>Start Election</a></td>";
+                                                        class='text-success'>Start Election</a></td>
+                                                        <td class='text-danger'>Election unbegun - no votes can be added.</td>";
                                 break;
                         }
                         echo $status_text;

@@ -7,6 +7,12 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: login.php");
     exit;
 }
+
+if (!$_SESSION["administrator"]) {
+    header("location: welcome.php");
+    exit;
+}
+
 ?>
 
 <!doctype html>
@@ -27,8 +33,6 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <header>
     <?php include "navigation.php"; ?>
 </header>
-
-
 
 <main>
     <section class="jumbotron text-center">
@@ -78,7 +82,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                                         echo "<p> Drag and drop the candidates into the order you want to vote for 
                                             them in</p>";
 
-                                        display_voting_system($election_id, $mysqli);
+                                        display_proxy_voting_system($election_id, $mysqli);
                                         break;
                                     case 2:
                                         display_results($election_id, $mysqli);
@@ -104,11 +108,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             ?>
         </div>
     </div>
-
-
 </main>
 
-<?php include "manifesto_modal.php" ?>
+
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -119,8 +121,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
-<script src=sortable_list_script.js></script>
-<script src=show_manifesto.js></script>
+<script src=sortable_list_script_proxy.js></script>
 
 </body>
 </html>

@@ -38,11 +38,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
         <?php
         require_once "config.php";
         /** @var $mysqli mysqli */
-        include "register_vote_script.php";
 
-        register_vote($mysqli);
+        include 'register_vote_script.php';
+
+        $election_id = register_proxy_vote($mysqli);
+
         ?>
-        <h2 class='font-weight-light'><a href='votes-list.php'>Click Here</a> to return to the list of available votes</h2>
+        <h2 class='font-weight-light'><a href='add_proxy_votes.php?election_id= <?php echo $election_id?> '>Click Here</a> to add another proxy vote</h2>
+        <h2 class='font-weight-light'><a href='create_election.php'>Click Here</a> to return to the list of elections</h2>
+        <h2 class='font-weight-light text-warning'>Do not refresh this page.</h2>
 
     </div>
 </main>

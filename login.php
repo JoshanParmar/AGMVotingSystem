@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
                 <label for="username">Username</label>
-                <input type="text" name="username" class="form-control" id="username" placeholder="Enter email">
+                <input type="text" name="username" class="form-control" id="username" placeholder="Enter username">
                 <span class="help-block text-danger"><?php echo $username_err; ?></span>
             </div>
 
