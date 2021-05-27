@@ -27,7 +27,7 @@ function get_print_candidates_array($election_id, mysqli $mysqli){
                 }
 
             } else {
-                echo "<p>There are no candidates for this election.</p>";
+                echo "<p>There are no options for this poll.</p>";
             }
         } else {
             echo "Oops! Something went wrong. Please try again later.";

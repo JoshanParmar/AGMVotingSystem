@@ -1,11 +1,7 @@
 <?php
 
-function write_vote(mysqli $mysqli, $vote_string, $election_id, $proxy){
+function write_vote(mysqli $mysqli, $vote_string, $election_id){
     $voter_token = uniqid('', true);
-
-    if ($proxy){
-        $voter_token = "Proxy" . $voter_token;
-    }
 
     $sql_store_vote = "INSERT INTO votes (vote_string, election_id, voter_token) VALUES (?, ?, ?)";
 
@@ -61,10 +57,10 @@ function register_vote(mysqli $mysqli){
             $stmt_get_if_voted->store_result();
 
             if ($stmt_get_if_voted->num_rows == 1) {
-                echo "<h2 class='font-weight-light'>You have already voted in this election.</h2>";
+                echo "<h2 class='font-weight-light'>You have already voted in this poll.</h2>";
             } else {
                 // If they have not already voted, write their vote into the votes table with a voter id.
-                write_vote($mysqli, $vote_string, $election_id, false);
+                write_vote($mysqli, $vote_string, $election_id);
             }
         } else {
             echo "Oops! Something went wrong. Please try again later.";
@@ -88,7 +84,7 @@ function register_proxy_vote(mysqli $mysqli){
     }
     $election_id = $_GET["election_id"][0];
 
-    write_vote($mysqli, $vote_string, $election_id, true);
+    write_vote($mysqli, $vote_string, $election_id);
 
     $mysqli->close();
 

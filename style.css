@@ -1,0 +1,9 @@
+.jumbotron-image {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.btn-custom{
+    margin: 3px;
+}

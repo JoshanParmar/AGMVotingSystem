@@ -11,18 +11,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap and JQuery CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <title>CULA Elections</title>
-</head>
+<?php include "header.php"; ?>
 <body>
 <header>
     <?php include "navigation.php"; ?>
@@ -31,10 +20,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 
 <main>
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Election Voting</h1>
-            <p class="lead text-muted">This page allows you to vote in and see the results of elections at this AGM</p>
+    <section class="jumbotron jumbotron-image text-center" style="background-image: url(imgs/vince3.jpg);">
+        <div class="container jumbotron-container">
+            <h1 class="jumbotron-heading text-white jumbotron-text">CULA Online</h1>
         </div>
     </section>
     <div class="container-sm">
@@ -65,17 +53,15 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
                             if ($stmt_get_election_data->fetch()) {
                                 switch ($status){
                                     case 0:
-                                        echo "<h1 class='font-weight-light'>This election has not yet begun</h1>";
+                                        echo "<h1 class='font-weight-light'>This poll has not yet begun</h1>";
                                         display_candidates($election_id, $mysqli);
                                         break;
                                     case 1:
-                                        echo "<h1 class='font-weight-light'>Vote in election for <b>" . $position_name
+                                        echo "<h1 class='font-weight-light'>Vote in poll: <b>" . $position_name
                                             . "</b></h1>";
-                                        echo "<h2 class='font-weight-light'>There are <b>" . $positions_available
-                                            . "</b> positions available for " . $position_name . "</h2>";
                                         echo "<p class='text-secondary'> Technical Information: Election ID = 
                                             <span id='election_id'>" . $election_id . "</span></p>";
-                                        echo "<p> Drag and drop the candidates into the order you want to vote for 
+                                        echo "<p> Drag and drop the options into the order you want to vote for 
                                             them in</p>";
 
                                         display_voting_system($election_id, $mysqli);

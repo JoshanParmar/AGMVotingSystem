@@ -17,28 +17,16 @@ if (!$_SESSION["administrator"]) {
 
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap and JQuery CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <title>CULA Elections</title>
-</head>
+    <?php include "header.php"; ?>
 <body>
 <header>
     <?php include "navigation.php"; ?>
 </header>
 
 <main>
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Election Voting</h1>
-            <p class="lead text-muted">This page is only for use by the ROs to add proxy votes - If you find yourself on this page and are not an RO, please contact the ROs immediately.</p>
+    <section class="jumbotron jumbotron-image text-center" style="background-image: url(imgs/vince3.jpg);">
+        <div class="container jumbotron-container">
+            <h1 class="jumbotron-heading text-white jumbotron-text">CULA Online</h1>
         </div>
     </section>
     <div class="container-sm">

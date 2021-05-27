@@ -27,7 +27,7 @@ function convert_vote_string($vote_string, $candidates){
 
 
 function display_results($election_id, mysqli $mysqli){
-    echo "<h3>The candidates in this election were as follows</h3>";
+    echo "<h3>The options in this poll were as follows</h3>";
 
     $candidates_array = get_print_candidates_array($election_id, $mysqli);
 
@@ -53,7 +53,7 @@ function display_results($election_id, mysqli $mysqli){
 
 
                 // Display Results of the Election
-                echo "<h3>The results of this election were as follows</h3>";
+                echo "<h3>The results of this poll were as follows</h3>";
                 count_votes($votes, 1);
 
             } else {

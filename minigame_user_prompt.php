@@ -26,54 +26,42 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     <div class="container-sm">
         <div class="page-header">
             <h1 class="font-weight-light">Hi, <b><?php echo htmlspecialchars($_SESSION["realname"]); ?></b></h1>
-            <h1  class="font-weight-light"> You can now vote in polls.</h1>
+            <h1 class="font-weight-light"> Your prompt for the minigame is:</h1>
             <?php
             require_once "config.php";
             /** @var $mysqli mysqli */
 
             // Get the list of elections
-            $stmt = "SELECT id, position_name, positions_available, status FROM elections";
+            $stmt = "SELECT id, prompt FROM minigame_prompts WHERE used = 0 ORDER BY rand() LIMIT 1";
             $result = $mysqli->query($stmt);
 
             // Display the list of elections as clickable buttons
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
 
-                    $button_class = "";
-                    $button_text = "";
-                    $button_link = "";
+            if ($result !== false && $result-> num_rows == 1) {
+                $row = $result->fetch_assoc();
+                    $prompt = $row["prompt"];
+                    $id = $row["id"];
+                    echo "<h2 class='font-weight-bolder'> " . $prompt . "</h2>";
+                    echo "<h2 class='text-danger'> Do not refresh this page until the next round.</h2>";
+                    $sql_change_status = "UPDATE minigame_prompts SET used = 1 WHERE id = ?";
 
-                    switch ($row["status"]) {
-                        case 0:
-                            $button_class = "btn-secondary";
-                            $button_text = $row["position_name"] . " - Poll yet to begin";
-                            $button_link = "vote.php?election_id=".$row["id"];
-                            break;
-                        case 1:
-                            $button_class = "btn-primary";
-                            $button_text = $row["position_name"] . " - Vote";
-                            $button_link = "vote.php?election_id=".$row["id"];
-                            break;
-
-                        case 2:
-                            $button_class = "btn-success";
-                            $button_text = $row["position_name"] . " - See Results";
-                            $button_link = "vote.php?election_id=".$row["id"];
-                            break;
+                    if ($stmt_change_status = $mysqli->prepare($sql_change_status)) {
+                        $stmt_change_status->bind_param("i", $id);
+                        if ($stmt_change_status->execute()) {
+                            echo "This prompt has been marked as used on the system";
+                        } else {
+                            echo $mysqli->error;
+                        }
                     }
-                    echo "<a href='" . $button_link .  "#' class='btn " . $button_class . " my-2'>" . $button_text
-                        . "</a> <br>";
-
-                    echo "</tr>";
-                }
+                    $stmt_change_status->close();
             } else {
-                echo "No polls have been scheduled for you event yet";
+                echo "No unused prompts left.";
             }
+
 
             $mysqli->close();
 
             ?>
-
         </div>
     </div>
 </main>

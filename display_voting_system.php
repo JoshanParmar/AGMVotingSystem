@@ -31,7 +31,7 @@ function draw_drag_drop_vote_ui($election_id, mysqli $mysqli){
                 echo "</p>";
 
             } else {
-                echo "<p>There are no candidates for this election.</p>";
+                echo "<p>There are no options for this poll.</p>";
             }
         } else {
             echo "Oops! Something went wrong. Please try again later.";
@@ -50,7 +50,7 @@ function display_voting_system($election_id, mysqli $mysqli){
             $stmt_get_if_voted->store_result();
 
             if ($stmt_get_if_voted->num_rows == 1) {
-                echo "<h2>You have already voted in this election.</h2>";
+                echo "<h2>You have already voted in this poll.</h2>";
                 exit;
             } else {
 

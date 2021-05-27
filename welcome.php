@@ -11,28 +11,16 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap and JQuery CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <title>CULA Elections</title>
-</head>
+<?php include "header.php"; ?>
 <body>
 <header>
     <?php include "navigation.php"; ?>
 </header>
 
 <main>
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Online</h1>
-            <p class="lead text-muted">Online AGM Management System Created by Joshan Parmar for the Cambridge University Liberal Association</p>
+    <section class="jumbotron jumbotron-image text-center" style="background-image: url(imgs/vince3.jpg);">
+        <div class="container jumbotron-container">
+            <h1 class="jumbotron-heading text-white jumbotron-text">CULA Online</h1>
         </div>
     </section>
     <div class="container-sm">
@@ -42,11 +30,13 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
         </div>
         <p>
-            <a href="votes-list.php" class="btn btn-primary my-1">Vote in AGM</a>
+            <a href="votes-list.php" class="btn btn-primary my-1">Vote in SD Motion Poll</a>
+            <a href="minigame_user_prompt.php" class="btn btn-warning my-1">SDs Mini Game</a>
             <?php
             // If the user is an administrator, give them the button to access the manage elections page
             if ($_SESSION["administrator"]){
-                echo "<a href='create_election.php' class='btn btn-info my-1'>Manage Elections</a>
+                echo "<a href='create_election.php' class='btn btn-info my-1'>Manage Polls</a>
+                      <a href='manage_prompts.php' class='btn btn-info my-1'>Manage Prompts</a>
                       <a href='manage_users.php' class='btn btn-success my-1'>Manage Users</a>";
             } ?>
             <a href="logout.php" class="btn btn-danger my-1">Sign Out of Your Account</a>

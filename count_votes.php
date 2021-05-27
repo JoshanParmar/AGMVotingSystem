@@ -36,11 +36,11 @@ function count_votes(array $votes, $positions){
     $round = 1;
     $total_votes = count($votes);
     $quota = ceil($total_votes/2);
-    echo "<p>Total Votes case in election: " . $total_votes . ". Quota for election: $quota";
+    echo "<p>Total Votes cast: " . $total_votes . ". Quota for victory: $quota";
 
 
     if ($positions==1){
-        // Run couunt once
+        // Run count once
         $vote_totals = get_vote_totals($votes);
         print_round($vote_totals, $round);
         $round++;
@@ -66,8 +66,7 @@ function count_votes(array $votes, $positions){
         }
 
         // Echo winner of election to HTML
-        echo "<h3 class='mb-5'> <b>" . implode("",  get_winner($vote_totals)) . "</b> is the (preliminary) 
-                winner of this Election.";
+        echo "<h3 class='mb-5'> <b>" . implode("",  get_winner($vote_totals)) . "</b> wins this vote.";
     } else {
         // Echo error in counting votes
         echo "<p>This system is not yet set up to count votes for elections of more than 1 position - please copy the 

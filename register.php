@@ -70,16 +70,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($username_err) && empty($password_err) && empty($confirm_password_err) && empty($realname_err)) {
 
         // Prepare an insert statement
-        $sql = "INSERT INTO users (username, password, realname) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO users (username, password, realname, verified) VALUES (?, ?, ?, ?)";
 
         if ($stmt = $mysqli->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("sss", $param_username, $param_password, $param_realname);
+            $stmt->bind_param("sssi", $param_username, $param_password, $param_realname, $param_verified);
 
             // Set parameters
             $param_username = $username;
             $param_realname = $realname;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+            $param_verified = 1;
 
             // Attempt to execute the prepared statement
             if ($stmt->execute()) {
@@ -101,35 +102,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap and JQuery CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <title>CULA AGM</title>
-</head>
+<?php include "header.php"; ?>
 <body>
 <header>
     <?php include "navigation.php"; ?>
 </header>
 
 <main>
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Registration</h1>
-            <p class="lead text-muted">Please register here - an admin will then approve your account.</p>
+    <section class="jumbotron jumbotron-image text-center" style="background-image: url(imgs/vince3.jpg);">
+        <div class="container jumbotron-container">
+            <h1 class="jumbotron-heading text-white jumbotron-text">CULA Online</h1>
         </div>
     </section>
     <div class="container-sm">
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 
             <div class="form-group <?php echo (!empty($realname_err)) ? 'has-error' : ''; ?>">
-                <label for="realname">Name</label>
+                <label for="realname">Full Name</label>
                 <input type="text" name="realname" class="form-control" id="realname" placeholder="Enter your Name">
                 <span class="help-block text-danger"><?php echo $realname_err; ?></span>
             </div>

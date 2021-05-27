@@ -18,7 +18,7 @@ if (!$_SESSION["administrator"]) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $position_name = trim($_POST["position_name"]);
-    $positions_available = trim($_POST["positions_available"]);
+    $positions_available = 1;
 
     if ($position_name != "") {
         require_once "config.php";
@@ -49,28 +49,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap and JQuery CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <title>CULA Elections</title>
-</head>
+<?php include "header.php"; ?>
 <body>
 <header>
     <?php include "navigation.php"; ?>
 </header>
 
 <main>
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Election Management</h1>
-            <p class="lead text-muted">This section allows you to create and manage elections for your AGM.</p>
+    <section class="jumbotron jumbotron-image text-center" style="background-image: url(imgs/vince3.jpg);">
+        <div class="container jumbotron-container">
+            <h1 class="jumbotron-heading text-white jumbotron-text">CULA Online</h1>
         </div>
     </section>
     <div class="container-sm">
@@ -88,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt_delete_row->bind_param("i", $delete_election_id);
 
                 if ($stmt_delete_row->execute()) {
-                    echo "<h4 class='font-weight-light text-success'> You have successfully deleted election id " . $delete_election_id . " from your AGM</h4>";
+                    echo "<h4 class='font-weight-light text-success'> You have successfully deleted vote id " . $delete_election_id . " from your event</h4>";
                 } else {
                     echo $mysqli->error;
                 }
@@ -112,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt_change_status->bind_param("ii", $change_election_status, $change_election_id);
 
                 if ($stmt_change_status->execute()) {
-                    echo "<h4 class='font-weight-light text-success'> You have successfully updated the status of election id " . $change_election_id . " to " . $change_election_status . "</h4>";
+                    echo "<h4 class='font-weight-light text-success'> You have successfully updated the status of vote id " . $change_election_id . " to " . $change_election_status . "</h4>";
                 } else {
                     echo $mysqli->error;
                 }
@@ -125,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         ?>
 
-        <h1 class="font-weight-light">For your AGM, you currently have the following elections planned:</h1>
+        <h1 class="font-weight-light">For your Event, you currently have the following polls planned:</h1>
 
         <?php
 
@@ -143,12 +131,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "<thead class='thead-dark'>";
                     echo "<tr>";
                     echo "<th scope='col'>#</th>";
-                    echo "<th scope='col'>Position Name</th>";
-                    echo "<th scope='col'>Positions Available</th>";
-                    echo "<th scope='col'>Candidates</th>";
+                    echo "<th scope='col'>Vote Name</th>";
+                    echo "<th scope='col'>Options</th>";
                     echo "<th scope='col'>Status</th>";
                     echo "<th scope='col'>Add Proxy Votes</th>";
-                    echo "<th scope='col'>Delete Election</th>";
+                    echo "<th scope='col'>Delete Poll</th>";
                     echo "</tr>";
                     echo "</thead>";
                     echo "<tbody>";
@@ -159,32 +146,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "<tr>";
                         echo "<th scope='row'>" . $r_election_id . "</th>";
                         echo "<td>" . $r_position_name . "</td>";
-                        echo "<td>" . $r_positions . "</td>";
-                        echo "<td> <a href='edit_candidates.php?election_id=" . $r_election_id . "'>View/Edit Candidates</a> </td>";
+                        echo "<td> <a href='edit_candidates.php?election_id=" . $r_election_id . "'>View/Edit Options</a> </td>";
 
                         $status_text = "";
 
                         switch ($r_status) {
                             case 2:
-                                $status_text = "<td class='text-success'>Election Completed - <a href=
+                                $status_text = "<td class='text-success'>Poll Completed - <a href=
                                                         'vote.php?election_id=" . $r_election_id . "' 
                                                         class='text-success'>See results</a></td>
-                                                        <td class='text-danger'>Election over - no votes can be added.</td>";
+                                                        <td class='text-danger'>Poll over - no votes can be added.</td>";
                                 break;
                             case 1:
-                                $status_text = "<td class='text-danger'>Election Underway - <a href=
+                                $status_text = "<td class='text-danger'>Poll Underway - <a href=
                                                         '?change_election=" . $r_election_id . "&change_status=" . 2 . "' 
-                                                        class='text-danger'>Stop Election</a></td>
+                                                        class='text-danger'>Stop Poll</a></td>
                                                         <td class='text-success'> 
                                                         <a href='add_proxy_votes.php?election_id=" . $r_election_id
-                                                        . "'>Add Provy Votes</a></td>";
+                                                        . "'>Add Proxy Votes</a></td>";
                                 break;
 
                             case 0:
-                                $status_text = "<td class='text-warning'>Election Not Yet Started - <a href=
+                                $status_text = "<td class='text-warning'>Poll Not Yet Started - <a href=
                                                         '?change_election=" . $r_election_id . "&change_status=" . 1 . "' 
-                                                        class='text-success'>Start Election</a></td>
-                                                        <td class='text-danger'>Election unbegun - no votes can be added.</td>";
+                                                        class='text-success'>Start Poll</a></td>
+                                                        <td class='text-danger'>Poll unbegun - no votes can be added.</td>";
                                 break;
                         }
                         echo $status_text;
@@ -198,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "</table>";
 
                 } else {
-                    echo "<h4 class='font-weight-light text-danger'> There are no elections scheduled your AGM</h4>";
+                    echo "<h4 class='font-weight-light text-danger'> There are no polls scheduled your Event</h4>";
 
                 }
             } else {
@@ -212,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ?>
 
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addElectionModal">
-            Add additional election
+            Add additional poll
         </button>
 
 
@@ -223,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addElectionModalLabel">Add Election</h5>
+                <h5 class="modal-title" id="addElectionModalLabel">Add Poll</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span>&times;</span>
                 </button>
@@ -231,15 +217,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="modal-body">
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                     <div class="form-group">
-                        <label for="position_name">Position Name</label>
+                        <label for="position_name">Poll title</label>
                         <input type="text" name="position_name" class="form-control" id="position_name"
-                               placeholder="Position Name (e.g. Publications Officer)">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="positions_available">Positions Available</label>
-                        <input type="number" name="positions_available" class="form-control" id="positions_available"
-                               placeholder="Positions Available (e.g. 3)">
+                               placeholder="Poll title (e.g. THB CULA>CUCA)">
                     </div>
 
                     <div class="form-group mt-2">

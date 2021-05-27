@@ -1,35 +1,24 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap and JQuery CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <title>CULA AGM</title>
-</head>
+<?php include "header.php"; ?>
 <body>
 <header>
     <?php include "navigation.php"; ?>
 </header>
 
 <main>
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Online System</h1>
-            <p class="lead text-muted">Welcome to the CULA online system for the AGM.</p>
-            <p class="lead text-muted">This system was created by Joshan Parmar.</p>
+    <section class="jumbotron jumbotron-image text-center" style="background-image: url(imgs/vince3.jpg);">
+        <div class="container jumbotron-container">
+            <h1 class="jumbotron-heading text-white jumbotron-text">CULA Online</h1>
         </div>
     </section>
 
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                <a href="login.php" class="btn btn-primary">Click here to login</a>
+                <a href="login.php" class="btn btn-primary btn-custom">Click here to login</a>
+                <a href="register.php" class="btn btn-secondary btn-custom">Click here to create an account</a>
+                <a href="http://cula.org.uk" class="btn btn-warning btn-custom">Click return to the main CULA website</a>
             </div>
         </div>
     </div>

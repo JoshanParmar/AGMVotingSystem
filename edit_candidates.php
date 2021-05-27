@@ -46,28 +46,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!doctype html>
 <html lang="en">
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap and JQuery CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-    <title>CULA Elections</title>
-</head>
+<?php include "header.php"; ?>
 <body>
 <header>
     <?php include "navigation.php"; ?>
 </header>
 
 <main>
-    <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">CULA AGM Election Management</h1>
-            <p class="lead text-muted">Edit candidates standing in elections here.</p>
+    <section class="jumbotron jumbotron-image text-center" style="background-image: url(imgs/vince3.jpg);">
+        <div class="container jumbotron-container">
+            <h1 class="jumbotron-heading text-white jumbotron-text">CULA Online</h1>
         </div>
     </section>
     <div class="container-sm">
@@ -75,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container-sm">
 
 
-        <a type='button' class='btn btn-secondary mb-3' href='create_election.php'>Return to list of elections</a>
+        <a type='button' class='btn btn-secondary mb-3' href='create_election.php'>Return to list of polls</a>
 
 
         <?php
@@ -91,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt_delete_candidate->bind_param("i", $delete_id);
 
                 if ($stmt_delete_candidate->execute()) {
-                    echo "<h4 class='font-weight-light text-success'> You have successfully deleted candidate id " . $delete_id . " from your Election</h4>";
+                    echo "<h4 class='font-weight-light text-success'> You have successfully deleted option id " . $delete_id . " from your poll</h4>";
                 }
                 else{
                     echo $mysqli->error;
@@ -129,15 +117,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     // Display the candidates for the election in the format depending on the status
                                     switch ($status){
                                         case 0:
-                                            echo "<h3 class='font-weight-light'>In your election for " . $position_name
-                                                .", you have the following candidates: </h3>";
+                                            echo "<h3 class='font-weight-light'>In your poll: " . $position_name
+                                                .", you have the following options: </h3>";
                                             echo "<table class='table table-hover mt-4'>";
                                             echo "<thead class='thead-dark'>";
                                             echo "<tr>";
                                             echo "<th scope='col'>#</th>";
-                                            echo "<th scope='col'>Candidate Name</th>";
-                                            echo "<th scope='col'>Manifesto</th>";
-                                            echo "<th scope='col'>Delete Candidate</th>";
+                                            echo "<th scope='col'>Option</th>";
+                                            echo "<th scope='col'>Manifesto (Optional)</th>";
+                                            echo "<th scope='col'>Delete Option</th>";
                                             echo "</tr>";
                                             echo "</thead>";
                                             echo "<tbody>";
@@ -165,13 +153,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             echo "</table>";
 
                                             echo "<button type='button' class='btn btn-success' data-toggle='modal' 
-                                                    data-target='#addCandidateModal'>Add additional candidate</button>";
+                                                    data-target='#addCandidateModal'>Add additional options</button>";
 
                                             break;
                                         case 1:
-                                            echo "<h3 class='font-weight-light'>This election is underway. You can no 
-                                                       longer edit candidates.</h3>";
-                                            echo "<h5>The candidates were as follows:</h5>";
+                                            echo "<h3 class='font-weight-light'>This poll is underway. You can no 
+                                                       longer edit the options.</h3>";
+                                            echo "<h5>The options were as follows:</h5>";
                                             echo "<ul class='list-group list-group-flush'>";
                                             $stmt_get_candidates->bind_result($r_id, $r_username,$r_manifesto_url);
                                             while ($stmt_get_candidates->fetch()) {
@@ -187,9 +175,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             break;
 
                                         case 2:
-                                            echo "<h3 class='font-weight-light'>This election has finished. You can no 
-                                                longer edit candidates.</h3>";
-                                            echo "<h5>The candidates were as follows:</h5>";
+                                            echo "<h3 class='font-weight-light'>This poll has finished. You can no 
+                                                longer edit options.</h3>";
+                                            echo "<h5>The options were as follows:</h5>";
                                             echo "<ul class='list-group list-group-flush'>";
                                             $stmt_get_candidates->bind_result($r_id, $r_username,$r_manifesto_url);
                                             while ($stmt_get_candidates->fetch()) {
@@ -204,7 +192,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             echo "</ul>";
 
                                             echo "<p class='mt-3'> <a href='vote.php?election_id=" . $election_id . "'>
-                                                Click Here</a> to view the results of this election";
+                                                Click Here</a> to view the results of this poll";
                                             break;
 
                                     }
@@ -213,25 +201,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         // If there are no candidates, alert the user to this, in the correct format for
                                         // the status of the election
                                         case 0:
-                                            echo "<h3 class='font-weight-light'>In your election for " . $position_name
-                                                .", you have the following candidates: </h3>";
-                                            echo "<p>There are no candidates for this election.</p>";
+                                            echo "<h3 class='font-weight-light'>In your poll:" . $position_name
+                                                .", you have the following options: </h3>";
+                                            echo "<p>There are no options for this poll.</p>";
                                             echo "<button type='button' class='btn btn-success' data-toggle='modal' 
-                                                    data-target='#addCandidateModal'>Add additional candidate</button>";
+                                                    data-target='#addCandidateModal'>Add additional options</button>";
                                             break;
 
                                         case 1:
-                                            echo "<h3 class='font-weight-light'>This election is underway. You can no 
-                                                longer edit candidates.</h3>";
-                                            echo "<p>There are no candidates for this election.</p>";
+                                            echo "<h3 class='font-weight-light'>This poll is underway. You can no 
+                                                longer edit options.</h3>";
+                                            echo "<p>There are no options for this poll.</p>";
                                             break;
 
                                         case 2:
-                                            echo "<h3 class='font-weight-light'>This election has finished. You can no 
-                                                longer edit candidates.</h3>";
-                                            echo "<p>There were no candidates for this election.</p>";
+                                            echo "<h3 class='font-weight-light'>This poll has finished. You can no 
+                                                longer edit options.</h3>";
+                                            echo "<p>There were no options for this poll.</p>";
                                             echo "<p class='mt-3'> <a href='vote.php?election_id=" . $election_id . "'>
-                                                Click Here</a> to view the results of this election";
+                                                Click Here</a> to view the results of this poll";
                                             break;
                                     }
                                 }
@@ -266,7 +254,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCandidateModalLabel">Add Candidate</h5>
+                <h5 class="modal-title" id="addCandidateModalLabel">Add Options</h5>
                 <button type="button" class="close" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
@@ -276,10 +264,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="form-group">
                         <label for="name">Candidate Name</label>
                         <input type="text" name="name" class="form-control" id="name"
-                               placeholder="Name (e.g. Freddie Poser)">
+                               placeholder="Name (e.g. Yes)">
                     </div>
                     <div class="form-group">
-                        <label for="manifesto-url">Manifesto URL</label>
+                        <label for="manifesto-url">Manifesto URL (Optional)</label>
                         <input type="text" name="manifesto-url" class="form-control" id="manifesto-url"
                                placeholder="freddie-poser.png">
                     </div>
