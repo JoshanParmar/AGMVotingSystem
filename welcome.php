@@ -30,8 +30,7 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 
         </div>
         <p>
-            <a href="votes-list.php" class="btn btn-primary my-1">Vote in SD Motion Poll</a>
-            <a href="minigame_user_prompt.php" class="btn btn-warning my-1">SDs Mini Game</a>
+            <a href="votes-list.php" class="btn btn-primary my-1">Vote in Poll</a>
             <?php
             // If the user is an administrator, give them the button to access the manage elections page
             if ($_SESSION["administrator"]){
